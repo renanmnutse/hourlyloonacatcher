@@ -83,31 +83,37 @@ accounts = {
   'oliviahye': 'hyejoohour'
 }
 
-images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
-image_loona = images["loona"][0]
-image_deukae = images["deukae"][0]
-images = images.drop([0])
-images = images.reset_index().drop(columns='index')
-#images.to_csv('images_to_post1.csv')
+def hloonacatcher():
+  images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
+  image_loona = images["loona"][0]
+  image_deukae = images["deukae"][0]
+  images = images.drop([0])
+  images = images.reset_index().drop(columns='index')
+  #images.to_csv('images_to_post1.csv')
 
-service = drive_auth()
-download_image(service, image_loona)
-download_image(service, image_deukae)
+  service = drive_auth()
+  download_image(service, image_loona)
+  download_image(service, image_deukae)
 
-files = [image_loona, image_deukae]
-file1 = random.choices(files, weights=[70,30], k=1)
-filenames = file1 + list(set(files) - set(file1))
-print(files)
-print(file1)
-print(filenames)
-status = '@'+accounts[''.join([i for i in filenames[0].partition(".")[0] if not i.isdigit()])]+' ✨ '+'@'+accounts[''.join([i for i in filenames[1].partition(".")[0] if not i.isdigit()])]
-print(status)
-media_ids = []
-for filename in filenames:
-     res = api.media_upload(filename)
-     media_ids.append(res.media_id)
+  files = [image_loona, image_deukae]
+  file1 = random.choices(files, weights=[70,30], k=1)
+  filenames = file1 + list(set(files) - set(file1))
+  status = '@'+accounts[''.join([i for i in filenames[0].partition("/")[2].partition("/")[2].partition(".")[0] if not i.isdigit()])]+' ✨ '+'@'+accounts[''.join([i for i in filenames[1].partition("/")[2].partition("/")[2].partition(".")[0] if not i.isdigit()])]
+  media_ids = []
+  for filename in filenames:
+      res = api.media_upload(filename)
+      media_ids.append(res.media_id)
 
-api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
+  api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
 
-os.system('rm ' + image_loona)
-os.system('rm ' + image_deukae)
+  os.system('rm ' + image_loona)
+  os.system('rm ' + image_deukae)
+
+import schedule
+import time
+
+schedule.every().hour.at(":05").do(hloonacatcher)
+
+while True:
+  schedule.run_pending()
+  time.sleep(1)
