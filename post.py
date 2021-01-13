@@ -4,7 +4,7 @@ Created on Tue Jan  5 23:46:12 2021
 
 @author: Renan
 """
-#import tweepy
+import tweepy
 import pandas as pd
 import random
 from os import environ
