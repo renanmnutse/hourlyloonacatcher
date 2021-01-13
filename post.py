@@ -97,10 +97,11 @@ download_image(service, image_deukae)
 files = [image_loona, image_deukae]
 file1 = random.choices(files, weights=[70,30], k=1)
 filenames = file1 + list(set(files) - set(file1))
-print("files:"+files)
-print('file1: '+file1)
-print('filenames: ' + filenames)
+print(files)
+print(file1)
+print(filenames)
 status = '@'+accounts[''.join([i for i in filenames[0].partition(".")[0] if not i.isdigit()])]+' ✨ '+'@'+accounts[''.join([i for i in filenames[1].partition(".")[0] if not i.isdigit()])]
+print(status)
 media_ids = []
 for filename in filenames:
      res = api.media_upload(filename)
