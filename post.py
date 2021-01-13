@@ -89,7 +89,7 @@ def hloonacatcher():
   image_deukae = images["deukae"][0]
   images = images.drop([0])
   images = images.reset_index().drop(columns='index')
-  #images.to_csv('images_to_post1.csv')
+  images.to_csv('images_to_post.csv')
 
   service = drive_auth()
   download_image(service, image_loona)
@@ -112,7 +112,7 @@ def hloonacatcher():
 import schedule
 import time
 
-schedule.every().hour.at(":05").do(hloonacatcher)
+schedule.every().hour.at(":00").do(hloonacatcher)
 
 while True:
   schedule.run_pending()
