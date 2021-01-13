@@ -117,7 +117,7 @@ def test_schedule():
   test_count+=1
 
 #schedule.every().hour.at(":05").do(hloonacatcher)
-schedule.every(5).minutes.do(test_schedule)
+schedule.every(2).minutes.do(test_schedule)
 while True:
   schedule.run_pending()
   time.sleep(1)
