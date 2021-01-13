@@ -7,3 +7,4 @@ tweepy==3.10.0
 schedule==0.6.0
 google==3.0.0
 google-api-python-client==1.12.8
+gunicorn==0.17.2
