@@ -59,7 +59,7 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 
 api = tweepy.API(auth)
-api.update_status(status='auth works')
+#api.update_status(status='auth works')
  
 accounts = {
   "jiu": "hourlyjiu",
@@ -103,7 +103,7 @@ for filename in filenames:
      res = api.media_upload(filename)
      media_ids.append(res.media_id)
 
-#api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
+api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
 
 os.system('rm ' + image_loona)
 os.system('rm ' + image_deukae)
