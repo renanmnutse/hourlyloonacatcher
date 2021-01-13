@@ -12,41 +12,22 @@ from os import environ
 import pickle
 import os.path
 import os
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 from datetime import datetime, timedelta
 import sys
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
-def drive_auth():
-  """Autenticação de utilização da API do drive
-  """
-  creds = None
-  # The file token.pickle stores the user's access and refresh tokens, and is
-  # created automatically when the authorization flow completes for the first
-  # time.
-  if os.path.exists('token.pickle'):
-      with open('token.pickle', 'rb') as token:
-          creds = pickle.load(token)
-  # If there are no (valid) credentials available, let the user log in.
-  # para obter o arquivo credentials.json valido é preciso ir ao console do google drive criar um projeto baixo-lo
-  # e coloca-lo neste diretório
-  if not creds or not creds.valid:
-      if creds and creds.expired and creds.refresh_token:
-          creds.refresh(Request())
-      else:
-          flow = InstalledAppFlow.from_client_secrets_file(
-              'credentials.json', SCOPES)
-          creds = flow.run_local_server(port=0)
-      # Save the credentials for the next run
-      with open('token.pickle', 'wb') as token:
-          pickle.dump(creds, token)
+SERVICE_ACCOUNT = environ['SERVICE_ACCOUNT']
 
-  service = build('drive', 'v3', credentials=creds)
-  return service
+def drive_auth():
+    credentials = service_account.Credentials.from_service_account_info(
+            SERVICE_ACCOUNT, scopes=SCOPES)
+
+    service = build('drive', 'v3', credentials=credentials)
+    return service
 
 def download_image(service, filename):
   phrase = "name contains '" + filename + "'"
@@ -121,7 +102,7 @@ for filename in filenames:
      res = api.media_upload(filename)
      media_ids.append(res.media_id)
 
-#api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
+api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
 
 os.system('rm ' + image_loona)
 os.system('rm ' + image_deukae)
