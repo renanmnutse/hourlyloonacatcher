@@ -112,6 +112,7 @@ import schedule
 import time
 test_count = 1
 def test_schedule():
+  global test_count
   api.update_status(status = 'teste: '+ test_count)
   test_count+=1
 
