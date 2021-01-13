@@ -8,6 +8,7 @@ import tweepy
 import pandas as pd
 import random
 from os import environ
+import ast
 
 import pickle
 import os.path
@@ -20,7 +21,7 @@ import sys
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
-SERVICE_ACCOUNT = environ['SERVICE_ACCOUNT']
+SERVICE_ACCOUNT = ast.literal_eval(environ['SERVICE_ACCOUNT'])
 
 def drive_auth():
     credentials = service_account.Credentials.from_service_account_info(
