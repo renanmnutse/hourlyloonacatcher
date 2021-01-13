@@ -98,22 +98,25 @@ def hloonacatcher():
   files = [image_loona, image_deukae]
   file1 = random.choices(files, weights=[70,30], k=1)
   filenames = file1 + list(set(files) - set(file1))
-  status = '@'+accounts[''.join([i for i in filenames[0].partition("/")[2].partition("/")[2].partition(".")[0] if not i.isdigit()])]+' ✨ '+'@'+accounts[''.join([i for i in filenames[1].partition("/")[2].partition("/")[2].partition(".")[0] if not i.isdigit()])]
+  status = '@'+accounts[''.join([i for i in filenames[0].partition(".")[0] if not i.isdigit()])]+' ✨ '+'@'+accounts[''.join([i for i in filenames[1].partition(".")[0] if not i.isdigit()])]
   media_ids = []
   for filename in filenames:
       res = api.media_upload(filename)
       media_ids.append(res.media_id)
 
-  api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
-
+  #api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
   os.system('rm ' + image_loona)
   os.system('rm ' + image_deukae)
 
 import schedule
 import time
-
-schedule.every().hour.at(":05").do(hloonacatcher)
-
+test_count = 1
+def test_schedule(){
+  api.update_status(status = 'teste: '+ test_count)
+  test_count+=1
+}
+#schedule.every().hour.at(":05").do(hloonacatcher)
+schedule.every(5).minutes.do(test_schedule)
 while True:
   schedule.run_pending()
   time.sleep(1)
