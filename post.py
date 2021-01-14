@@ -54,10 +54,9 @@ def download_file(service, filename):
 def upload_file(service, filename, file_id):
     from googleapiclient.http import MediaFileUpload
     folder_id = '1gnhofJBrfyp_UW5cdR6XCouSgZFbie6V'
-    #file_metadata = {'name': filename, 'parents': [folder_id]}
-    file_metadata = {'name': filename, 'parents': [folder_id], 'fileId': file_id}
+    file_metadata = {'name': filename, 'parents': [folder_id]}
     media = MediaFileUpload(filename, resumable=True)
-    file = service.files().update(body=file_metadata,
+    file = service.files().update(fileId=file_id, body=file_metadata,
                                     media_body=media).execute()
       
 CONSUMER_KEY = environ['CONSUMER_KEY']
@@ -123,7 +122,7 @@ def hloonacatcher():
 import schedule
 import time
 
-schedule.every().hour.at(":05").do(hloonacatcher)
+schedule.every().hour.at(":15").do(hloonacatcher)
 
 while True:
   schedule.run_pending()
