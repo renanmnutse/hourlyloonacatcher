@@ -87,7 +87,7 @@ accounts = {
   'yves': 'yveshourly', 
   'chuu': 'chuuhour', 
   'gowon': 'hourlywon',
-  'oliviahye': 'hyejoohour'
+  'oliviahye': 'hourlyolivia'
 }
 
 def hloonacatcher():
