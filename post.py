@@ -54,11 +54,11 @@ def download_file(service, filename):
 def upload_file(service, filename, file_id):
     from googleapiclient.http import MediaFileUpload
     folder_id = '1gnhofJBrfyp_UW5cdR6XCouSgZFbie6V'
-    file_metadata = {'name': filename, 'parents': [folder_id]}
-    #file_metadata = {'name': filename, 'parents': [folder_id], 'id': file_id}
+    #file_metadata = {'name': filename, 'parents': [folder_id]}
+    file_metadata = {'name': filename, 'parents': [folder_id], 'id': file_id}
     media = MediaFileUpload(filename, resumable=True)
-    file = service.files().create(body=file_metadata,
-                                    media_body=media, fields='id').execute()
+    file = service.files().update(body=file_metadata,
+                                    media_body=media).execute()
       
 CONSUMER_KEY = environ['CONSUMER_KEY']
 CONSUMER_SECRET = environ['CONSUMER_SECRET']
