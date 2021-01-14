@@ -93,6 +93,7 @@ accounts = {
 }
 
 def hloonacatcher():
+  service = drive_auth()
   download_file(service, 'images_to_post.csv')
   images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
   image_loona = images["loona"][0]
@@ -102,7 +103,6 @@ def hloonacatcher():
   images.to_csv('images_to_post.csv')
   upload_file(service, 'images_to_post.csv')
 
-  service = drive_auth()
   download_file(service, image_loona)
   download_file(service, image_deukae)
 
