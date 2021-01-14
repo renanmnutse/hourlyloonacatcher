@@ -49,16 +49,15 @@ def download_file(service, filename):
   while done is False:
       status, done = downloader.next_chunk()
       print("Download %d%%." % int(status.progress() * 100))
+  return file_id
 
-def upload_file(service, filename):
+def upload_file(service, filename, file_id):
     from googleapiclient.http import MediaFileUpload
     folder_id = '1gnhofJBrfyp_UW5cdR6XCouSgZFbie6V'
-    file_metadata = {'name': filename, 'parents': [folder_id]}
+    file_metadata = {'name': filename, 'parents': [folder_id], 'id': file_id}
     media = MediaFileUpload(filename, resumable=True)
     file = service.files().create(body=file_metadata,
-                                    media_body=media,
-                                    fields='id').execute()
-    print('File ID: %s' % file.get('id'))
+                                    media_body=media).execute()
       
 CONSUMER_KEY = environ['CONSUMER_KEY']
 CONSUMER_SECRET = environ['CONSUMER_SECRET']
@@ -94,14 +93,14 @@ accounts = {
 
 def hloonacatcher():
   service = drive_auth()
-  download_file(service, 'images_to_post.csv')
+  file_id = download_file(service, 'images_to_post.csv')
   images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
   image_loona = images["loona"][0]
   image_deukae = images["deukae"][0]
   images = images.drop([0])
   images = images.reset_index().drop(columns='index')
   images.to_csv('images_to_post.csv')
-  upload_file(service, 'images_to_post.csv')
+  upload_file(service, 'images_to_post.csv', file_id)
 
   download_file(service, image_loona)
   download_file(service, image_deukae)
