@@ -30,7 +30,7 @@ def drive_auth():
     service = build('drive', 'v3', credentials=credentials)
     return service
 
-def download_image(service, filename):
+def download_file(service, filename):
   phrase = "name contains '" + filename + "'"
   # Call the Drive v3 API
   results = service.files().list(q=phrase,
@@ -50,6 +50,15 @@ def download_image(service, filename):
       status, done = downloader.next_chunk()
       print("Download %d%%." % int(status.progress() * 100))
 
+def upload_file(service, filename):
+    from googleapiclient.http import MediaFileUpload
+    folder_id = '1gnhofJBrfyp_UW5cdR6XCouSgZFbie6V'
+    file_metadata = {'name': filename, 'parents': [folder_id]}
+    media = MediaFileUpload(filename, resumable=True)
+    file = service.files().create(body=file_metadata,
+                                    media_body=media,
+                                    fields='id').execute()
+    print('File ID: %s' % file.get('id'))
       
 CONSUMER_KEY = environ['CONSUMER_KEY']
 CONSUMER_SECRET = environ['CONSUMER_SECRET']
@@ -84,16 +93,18 @@ accounts = {
 }
 
 def hloonacatcher():
+  download_file(service, 'images_to_post.csv')
   images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
   image_loona = images["loona"][0]
   image_deukae = images["deukae"][0]
   images = images.drop([0])
   images = images.reset_index().drop(columns='index')
   images.to_csv('images_to_post.csv')
+  upload_file(service, 'images_to_post.csv')
 
   service = drive_auth()
-  download_image(service, image_loona)
-  download_image(service, image_deukae)
+  download_file(service, image_loona)
+  download_file(service, image_deukae)
 
   files = [image_loona, image_deukae]
   file1 = random.choices(files, weights=[70,30], k=1)
