@@ -69,7 +69,7 @@ api = tweepy.API(auth)
 #api.update_status(status='auth works')
  
 accounts = {
-  "jiu": "hourlyjiu",
+  "jiu": "minjihourly",
   "sua": "suahours",
   "siyeon": "siyeonhours",
   "handong": "hourlydong",
