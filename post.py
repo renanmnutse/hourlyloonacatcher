@@ -30,7 +30,7 @@ def drive_auth():
     service = build('drive', 'v3', credentials=credentials)
     return service
 
-def download_image(service, filename):
+def download_file(service, filename):
   phrase = "name contains '" + filename + "'"
   # Call the Drive v3 API
   results = service.files().list(q=phrase,
@@ -49,7 +49,14 @@ def download_image(service, filename):
   while done is False:
       status, done = downloader.next_chunk()
       print("Download %d%%." % int(status.progress() * 100))
+  return file_id
 
+def upload_file(service, filename, file_id):
+    from googleapiclient.http import MediaFileUpload
+    file_metadata = {'name': filename}
+    media = MediaFileUpload(filename, resumable=True)
+    file = service.files().update(fileId=file_id, body=file_metadata,
+                                    media_body=media).execute()
       
 CONSUMER_KEY = environ['CONSUMER_KEY']
 CONSUMER_SECRET = environ['CONSUMER_SECRET']
@@ -62,7 +69,7 @@ api = tweepy.API(auth)
 #api.update_status(status='auth works')
  
 accounts = {
-  "jiu": "hourlyjiu",
+  "jiu": "minjihourly",
   "sua": "suahours",
   "siyeon": "siyeonhours",
   "handong": "hourlydong",
@@ -80,20 +87,22 @@ accounts = {
   'yves': 'yveshourly', 
   'chuu': 'chuuhour', 
   'gowon': 'hourlywon',
-  'oliviahye': 'hyejoohour'
+  'oliviahye': 'hourlyolivia'
 }
 
 def hloonacatcher():
+  service = drive_auth()
+  file_id = download_file(service, 'images_to_post.csv')
   images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
   image_loona = images["loona"][0]
   image_deukae = images["deukae"][0]
   images = images.drop([0])
   images = images.reset_index().drop(columns='index')
-  #images.to_csv('images_to_post1.csv')
+  images.to_csv('images_to_post.csv')
+  upload_file(service, 'images_to_post.csv', file_id)
 
-  service = drive_auth()
-  download_image(service, image_loona)
-  download_image(service, image_deukae)
+  download_file(service, image_loona)
+  download_file(service, image_deukae)
 
   files = [image_loona, image_deukae]
   file1 = random.choices(files, weights=[70,30], k=1)
@@ -110,6 +119,7 @@ def hloonacatcher():
 
 import schedule
 import time
+<<<<<<< HEAD
 test_count = 1
 def test_schedule():
   global test_count
@@ -118,6 +128,11 @@ def test_schedule():
 
 #schedule.every().hour.at(":05").do(hloonacatcher)
 schedule.every(2).minutes.do(test_schedule)
+=======
+
+schedule.every().hour.at(":00").do(hloonacatcher)
+
+>>>>>>> 16017acb7bea2b85202bacd7f9afc382303209aa
 while True:
   schedule.run_pending()
   time.sleep(1)
