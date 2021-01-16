@@ -21,7 +21,7 @@ api = tweepy.API(auth)
 
 
 deukae = {
-  "jiu": "hourlyjiu",
+  "jiu": "minjihourly",
   "sua": "suahours",
   "siyeon": "siyeonhours",
   "handong": "hourlydong",
@@ -45,31 +45,58 @@ loona = {
   'oliviahye': 'hourlyolivia'
 }
 
-count = pd.Series()
-# Create a tweet
+image_count = pd.read_csv('image_count.csv', index_col='Unnamed: 0').to_dict()['0']
 
-#api.update_status("k")
-api.me()
-tweets = api.home_timeline(include_entities='true')
-#public_tweets = api.user_timeline('hyejoohour', count = 5000, include_rts = 'false', exclude_replies = 'true')
+first_id = {
+  "jiu": 0,
+  "sua": 0,
+  "siyeon": 0,
+  "handong": 0,
+  "yoohyeon": 0,
+  "dami": 0,
+  "gahyeon": 0,
+  'heejin': 0, 
+  'hyunjin': 0,
+  'haseul': 0, 
+  'yeojin': 0, 
+  'vivi': 0, 
+  'kimlip': 0, 
+  'jinsoul': 0, 
+  'choerry': 0, 
+  'yves': 0, 
+  'chuu': 0,  
+  'gowon': 0,
+  'oliviahye': 0
+}
+
+last_id = pd.read_csv('last_id.csv', index_col='Unnamed: 0').to_dict()['0']
+
 def fetch(dict, folder):    
   for key,value in dict.items():
-    public_tweets = api.user_timeline(value, count = 10000, include_rts = 'false', exclude_replies = 'true')
+    public_tweets = api.user_timeline(value, count = 200, include_rts = 'false', exclude_replies = 'true')
     url = []
     for tweet in public_tweets:
-      #url.append(tweet.entities["media"][0]['media_url_https'])
       if "media" in tweet.entities:
-          if "thumb" in tweet.entities["media"][0]['media_url_https']:         
-              url.append(tweet.entities["media"][0]['media_url_https'])
-    i=1
+          if "thumb" not in tweet.entities["media"][0]['media_url']:         
+              first_id[key] = tweet.id
+              break
+    for tweet in public_tweets:
+      print(tweet.id)
+      print(str(key)+str(last_id[key]))
+      if (tweet.id == last_id[key]):
+          break
+      if "media" in tweet.entities:
+          if "thumb" not in tweet.entities["media"][0]['media_url']:         
+              url.append(tweet.entities["media"][0]['media_url'])
     for image in url:
-      name = "images" + "/" + folder + "/" + key + str(i)+".jpg"
+      image_count[key] += 1
+      name = "images" + "/" + folder + "/" + key + str(image_count[key])+".jpg"
+      print(name)
       urllib.request.urlretrieve(image, name)
-      count[key] = i
-      i+=1
+
 
 fetch(deukae, 'deukae')
 fetch(loona, 'loona')
-#urllib.request.urlretrieve("https://pbs.twimg.com/media/EqxwHtBXcAUE_7B.jpg", "local-filename.jpg")
 
-#x = urllib.request.urlretrieve("https://pbs.twimg.com/media/EqxwHtBXcAUE_7B.jpg", "asda.jpg")
+pd.DataFrame.from_dict(first_id, orient='index').to_csv('last_id.csv')
+pd.DataFrame.from_dict(image_count, orient='index').to_csv('image_count.csv')
