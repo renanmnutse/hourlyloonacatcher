@@ -113,14 +113,14 @@ def hloonacatcher():
       res = api.media_upload(filename)
       media_ids.append(res.media_id)
 
-  #api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
+  api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
   os.system('rm ' + image_loona)
   os.system('rm ' + image_deukae)
 
 import schedule
 import time
 
-schedule.every().hour.at(":00").do(hloonacatcher)
+schedule.every().hour.at(":18").do(hloonacatcher)
 
 while True:
   schedule.run_pending()
