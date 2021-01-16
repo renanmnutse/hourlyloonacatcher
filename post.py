@@ -119,20 +119,9 @@ def hloonacatcher():
 
 import schedule
 import time
-<<<<<<< HEAD
-test_count = 1
-def test_schedule():
-  global test_count
-  api.update_status(status = 'teste: '+ str(test_count))
-  test_count+=1
-
-#schedule.every().hour.at(":05").do(hloonacatcher)
-schedule.every(2).minutes.do(test_schedule)
-=======
 
 schedule.every().hour.at(":00").do(hloonacatcher)
 
->>>>>>> 16017acb7bea2b85202bacd7f9afc382303209aa
 while True:
   schedule.run_pending()
   time.sleep(1)
