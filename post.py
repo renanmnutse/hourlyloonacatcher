@@ -120,7 +120,7 @@ def hloonacatcher():
 import schedule
 import time
 
-schedule.every().hour.at(":18").do(hloonacatcher)
+schedule.every().hour.at(":00").do(hloonacatcher)
 
 while True:
   schedule.run_pending()
