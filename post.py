@@ -84,7 +84,7 @@ accounts = {
   'kimlip': 'kimliphourly', 
   'jinsoul': 'hourlyjinsoul', 
   'choerry': 'hourlychoerry', 
-  'yves': 'hsyhourly', 
+  'yves': 'yveshourly', 
   'chuu': 'chuuhour', 
   'gowon': 'hourlywon',
   'oliviahye': 'hourlyolivia'
