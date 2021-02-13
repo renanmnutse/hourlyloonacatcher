@@ -69,26 +69,27 @@ api = tweepy.API(auth)
 #api.update_status(status='auth works')
  
 accounts = {
-  "jiu": "minjihourly",
+  "jiu": "hourlyjiu",
   "sua": "suahours",
   "siyeon": "siyeonhours",
   "handong": "hourlydong",
-  "yoohyeon": "hourlyoohyoen",
+  "yoohyeon": "hourlyyooh",
   "dami": "hourly_dami",
   "gahyeon": "hourlygahyeon",
   'heejin': 'hourlyheejin', 
   'hyunjin': 'hourlyaeong', 
   'haseul': 'seulhour', 
-  'yeojin': 'hourlyyeojin', 
+  'yeojin': 'hourlyeojins', 
   'vivi': 'vivihourly', 
   'kimlip': 'kimliphourly', 
   'jinsoul': 'hourlyjinsoul', 
   'choerry': 'hourlychoerry', 
   'yves': 'yveshourIy', 
   'chuu': 'chuuhour', 
-  'gowon': 'hourlywon',
+  'gowon': 'wonhourly',
   'oliviahye': 'hourlyolivia'
 }
+
 
 def hloonacatcher():
   service = drive_auth()
