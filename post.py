@@ -97,10 +97,7 @@ def hloonacatcher():
   images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
   image_loona = images["loona"][0]
   image_deukae = images["deukae"][0]
-  images = images.drop([0])
-  images = images.reset_index().drop(columns='index')
-  images.to_csv('images_to_post.csv')
-  upload_file(service, 'images_to_post.csv', file_id)
+
 
   download_file(service, image_loona)
   download_file(service, image_deukae)
@@ -117,6 +114,18 @@ def hloonacatcher():
   api.update_status(status=' ✨ '+status+' ✨ ', media_ids=media_ids)
   os.system('rm ' + image_loona)
   os.system('rm ' + image_deukae)
+
+  images = images.drop([0])
+  images = images.reset_index().drop(columns='index')
+  images.to_csv('images_to_post.csv')
+  upload_file(service, 'images_to_post.csv', file_id)
+
+  file_id_log = download_file(service, 'post_log.csv')
+  log = pd.read_csv('post_log.csv').drop(columns='Unnamed: 0')
+  log.loc[''] = [''.join([i for i in files[0].partition(".")[0] if not i.isdigit()]), ''.join([i for i in files[1].partition(".")[0] if not i.isdigit()])]
+  log = log.reset_index().drop(columns='index')
+  images.to_csv('post_log.csv')
+  upload_file(service, 'post_log.csv', file_id_log)
 
 import schedule
 import time
