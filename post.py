@@ -124,7 +124,7 @@ def hloonacatcher():
   log = pd.read_csv('post_log.csv').drop(columns='Unnamed: 0')
   log.loc[''] = [''.join([i for i in files[0].partition(".")[0] if not i.isdigit()]), ''.join([i for i in files[1].partition(".")[0] if not i.isdigit()])]
   log = log.reset_index().drop(columns='index')
-  images.to_csv('post_log.csv')
+  log.to_csv('post_log.csv')
   upload_file(service, 'post_log.csv', file_id_log)
 
 import schedule
