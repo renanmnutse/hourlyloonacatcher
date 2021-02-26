@@ -61,7 +61,7 @@ def load_flying():
         dataset["post"].append(False)
       elif img is not None:
         dataset["image"].append(img)
-
+  
   for filename in os.listdir(path + 'deukae/'):
       img = cv.imread(path + 'deukae/' + filename)
       if img is not None and filename not in dataset["filename"]:
@@ -125,8 +125,8 @@ def do_kmeans(X, n_clusters=100):
 
 """## Escolher a imagem"""
 
-def get_probs(loona_prob = [100/12] * 12, deukae_prob = [100/7] * 7):
-  loona = [
+def get_probs(pairs_prob = [100/84] * 84):
+    loona = [
       'heejin',
       'hyunjin',
       'haseul',
@@ -139,36 +139,34 @@ def get_probs(loona_prob = [100/12] * 12, deukae_prob = [100/7] * 7):
       'chuu',
       'gowon',
       'oliviahye'
-  ]
+      ]
+    deukae = [
+        "jiu",
+        "sua",
+        "siyeon",
+        "handong",
+        "yoohyeon",
+        "dami",
+        "gahyeon"
+    ]
+    
+    pairs = []
+    for l in loona:
+      for d in deukae:
+        pairs.append(l + '_' + d)
+    return pairs, pairs_prob
+    
 
-  deukae = [
-      "jiu",
-      "sua",
-      "siyeon",
-      "handong",
-      "yoohyeon",
-      "dami",
-      "gahyeon"
-  ]
-
-  return loona, loona_prob, deukae, deukae_prob
-
-def update_probs(loona_prob, deukae_prob, loona, deukae, loona_choice, deukae_choice):
-  for i in range(len(loona)):
-    if loona[i] not in loona_choice:
-      loona_prob[i] += 100/12
+def update_probs(pairs, pairs_prob, choice):
+  for i in range(len(pairs)):
+    if pairs[i] not in choice:
+      pairs_prob[i] += 100/84
     else:
-      loona_prob[i] = 100/12
+      pairs_prob[i] = 0
 
-  for i in range(len(deukae)):
-    if deukae[i] not in deukae_choice:
-      deukae_prob[i] += 100/7
-    else:
-      deukae_prob[i] = 100/7
+  print("update: {0}".format(pairs_prob))
 
-  print("update: {0}, {1}".format(loona_prob, deukae_prob))
-
-  return loona_prob, deukae_prob
+  return pairs_prob
 
 import random 
 from sklearn.metrics import silhouette_samples
@@ -197,20 +195,20 @@ def first_run():
 
   # first time
 
-  loona, loona_prob, deukae, deukae_prob = get_probs()
-  loona_choice = random.choices(loona, weights=loona_prob, k=1) 
-  deukae_choice = random.choices(deukae, weights=deukae_prob, k=1) 
-  loona_prob, deukae_prob = update_probs(loona_prob, deukae_prob, loona, deukae, loona_choice, deukae_choice)
+  pairs, pairs_prob = get_probs()
+  choice = random.choices(pairs, weights=pairs_prob, k=1) 
+  pairs_prob = update_probs(pairs, pairs_prob, choice)
+  choice = choice[0].split('_')
 
   for i in range(192):
-    print(loona_choice[0], deukae_choice[0]) 
+    print(choice[0], choice[1]) 
     imageLoona, imageDeukae = -1, -1
     #get image pair for post
     for c in clusterList:
       for image_id, cluster in enumerate(cluster_labels):
           if not dataset["post"][image_id]:
             if cluster == c:
-              if loona_choice[0] in dataset["filename"][image_id]:
+              if choice[0] in dataset["filename"][image_id]:
                 print(image_id)
                 imageLoona = image_id
                 break
@@ -218,7 +216,7 @@ def first_run():
       for image_id, cluster in enumerate(cluster_labels):
           if not dataset["post"][image_id]:
             if cluster == c:
-              if deukae_choice[0] in dataset["filename"][image_id]:
+              if choice[1] in dataset["filename"][image_id]:
                 print(image_id)
                 imageDeukae = image_id
                 break
@@ -227,9 +225,9 @@ def first_run():
         dataset["post"][imageLoona] = True
         dataset["post"][imageDeukae] = True
         # new pair
-        loona_choice = random.choices(loona, weights=loona_prob, k=1) 
-        deukae_choice = random.choices(deukae, weights=deukae_prob, k=1) 
-        loona_prob, deukae_prob = update_probs(loona_prob, deukae_prob, loona, deukae, loona_choice, deukae_choice)
+        choice = random.choices(pairs, weights=pairs_prob, k=1) 
+        pairs_prob = update_probs(pairs, pairs_prob, choice)
+        choice = choice[0].split('_')
         # get out and choose right image
         break
     
@@ -249,20 +247,14 @@ def first_run():
 
   df_images_to_post = pd.DataFrame(images_to_post)
 
-  df_loona = {'name': [], 'prob': []}
-  df_loona['name'] = loona
-  df_loona['prob'] = loona_prob
-  df_loona = pd.DataFrame(df_loona)
-
-  df_deukae = {'name': [], 'prob': []}
-  df_deukae['name'] = deukae
-  df_deukae['prob'] = deukae_prob
-  df_deukae = pd.DataFrame(df_deukae)
+  df_pairs = {'pairs': [], 'prob': []}
+  df_pairs['pairs'] = pairs
+  df_pairs['prob'] = pairs_prob
+  df_pairs = pd.DataFrame(df_pairs)
 
   df_dataset.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_dataset.csv')
   df_images_to_post.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/images_to_post.csv')
-  df_loona.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_loona.csv')
-  df_deukae.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_deukae.csv')
+  df_pairs.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_pairs.csv')
 
 def flying_run():  
 
@@ -283,25 +275,23 @@ def flying_run():
   imageDeukae = None
 
   images_to_post = pd.read_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher/images_to_post.csv').drop(columns='Unnamed: 0').reset_index().drop(columns='index').to_dict(orient='list')
-  #df_loona = pd.read_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_loona.csv').drop(columns='Unnamed: 0').reset_index().drop(columns='index')
-  #loona, loona_prob = list(df_loona['name']), list(df_loona['prob'])
-  #df_deukae = pd.read_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_deukae.csv').drop(columns='Unnamed: 0').reset_index().drop(columns='index')
-  #deukae, deukae_prob = list(df_deukae['name']), list(df_deukae['prob'])
-  loona, loona_prob, deukae, deukae_prob = get_probs()
+  df_pairs = pd.read_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_pairs.csv').drop(columns='Unnamed: 0').reset_index().drop(columns='index')
+  pairs, pairs_prob = list(df_pairs['pairs']), list(df_pairs['prob'])
+  #pairs, pairs_prob = get_probs()
   
-  loona_choice = random.choices(loona, weights=loona_prob, k=1) 
-  deukae_choice = random.choices(deukae, weights=deukae_prob, k=1) 
-  loona_prob, deukae_prob = update_probs(loona_prob, deukae_prob, loona, deukae, loona_choice, deukae_choice)
+  choice = random.choices(pairs, weights=pairs_prob, k=1) 
+  pairs_prob = update_probs(pairs, pairs_prob, choice)
+  choice = choice[0].split('_')
 
   for i in range(192):
-    print(loona_choice[0], deukae_choice[0]) 
+    print(choice[0], choice[1])
     imageLoona, imageDeukae = -1, -1
     #get image pair for post
     for c in clusterList:
       for image_id, cluster in enumerate(cluster_labels):
           if not dataset["post"][image_id]:
             if cluster == c:
-              if loona_choice[0] in dataset["filename"][image_id]:
+              if choice[0] in dataset["filename"][image_id]:
                 print(image_id)
                 imageLoona = image_id
                 break
@@ -309,7 +299,7 @@ def flying_run():
       for image_id, cluster in enumerate(cluster_labels):
           if not dataset["post"][image_id]:
             if cluster == c:
-              if deukae_choice[0] in dataset["filename"][image_id]:
+              if choice[1] in dataset["filename"][image_id]:
                 print(image_id)
                 imageDeukae = image_id
                 break
@@ -318,9 +308,9 @@ def flying_run():
         dataset["post"][imageLoona] = True
         dataset["post"][imageDeukae] = True
         # new pair
-        loona_choice = random.choices(loona, weights=loona_prob, k=1) 
-        deukae_choice = random.choices(deukae, weights=deukae_prob, k=1) 
-        loona_prob, deukae_prob = update_probs(loona_prob, deukae_prob, loona, deukae, loona_choice, deukae_choice)
+        choice = random.choices(pairs, weights=pairs_prob, k=1) 
+        pairs_prob = update_probs(pairs, pairs_prob, choice)
+        choice = choice[0].split('_')
         # get out and choose right image
         break
     
@@ -334,26 +324,21 @@ def flying_run():
     #cv2_imshow(dataset["image"][imageDeukae])
 
   # generate dfs for saving
-
   del dataset['image']
+  # only when images where deleted
+  #del dataset['Unnamed: 0.1']
+  
   df_dataset = pd.DataFrame(dataset)
-
+  
   df_images_to_post = pd.DataFrame(images_to_post)
-
-  df_loona = {'name': [], 'prob': []}
-  df_loona['name'] = loona
-  df_loona['prob'] = loona_prob
-  df_loona = pd.DataFrame(df_loona)
-
-  df_deukae = {'name': [], 'prob': []}
-  df_deukae['name'] = deukae
-  df_deukae['prob'] = deukae_prob
-  df_deukae = pd.DataFrame(df_deukae)
-
+  df_pairs = {'pairs': [], 'prob': []}
+  df_pairs['pairs'] = pairs
+  df_pairs['prob'] = pairs_prob
+  df_pairs = pd.DataFrame(df_pairs)
+  
   df_dataset.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_dataset.csv')
   df_images_to_post.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/images_to_post.csv')
-  df_loona.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_loona.csv')
-  df_deukae.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_deukae.csv')
+  df_pairs.to_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_pairs.csv')
 
 # when no images pairs were generated previously
 #first_run()
