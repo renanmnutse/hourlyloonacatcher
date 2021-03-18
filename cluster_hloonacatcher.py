@@ -331,6 +331,8 @@ def flying_run():
   df_dataset = pd.DataFrame(dataset)
   
   df_images_to_post = pd.DataFrame(images_to_post)
+  df_images_to_post = df_images_to_post.sample(frac=1).reset_index(drop=True)
+
   df_pairs = {'pairs': [], 'prob': []}
   df_pairs['pairs'] = pairs
   df_pairs['prob'] = pairs_prob
