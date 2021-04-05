@@ -80,13 +80,13 @@ accounts = {
   'hyunjin': 'hourlyaeong', 
   'haseul': 'seulhour', 
   'yeojin': 'hourlyeojins', 
-  'vivi': 'vivihourly', 
+  'vivi': 'hourvivi', 
   'kimlip': 'kimliphourly', 
   'jinsoul': 'hourlyjinsoul', 
   'choerry': 'hourlychoerry', 
   'yves': 'yveshourIy', 
   'chuu': 'chuuhour', 
-  'gowon': 'wonhourly',
+  'gowon': 'hourlygwon',
   'oliviahye': 'hourlyolivia'
 }
 
