@@ -200,7 +200,7 @@ def first_run():
   pairs_prob = update_probs(pairs, pairs_prob, choice)
   choice = choice[0].split('_')
 
-  for i in range(192):
+  for i in range(168):
     print(choice[0], choice[1]) 
     imageLoona, imageDeukae = -1, -1
     #get image pair for post
@@ -283,7 +283,7 @@ def flying_run():
   pairs_prob = update_probs(pairs, pairs_prob, choice)
   choice = choice[0].split('_')
 
-  for i in range(192):
+  for i in range(168):
     print(choice[0], choice[1])
     imageLoona, imageDeukae = -1, -1
     #get image pair for post
@@ -319,6 +319,10 @@ def flying_run():
       images_to_post['deukae'].append(dataset["filename"][imageDeukae])
     else:
       print("No more image combinations for the pair")
+      # new pair
+      choice = random.choices(pairs, weights=pairs_prob, k=1) 
+      pairs_prob = update_probs(pairs, pairs_prob, choice)
+      choice = choice[0].split('_')
 
     #cv2_imshow(dataset["image"][imageLoona])
     #cv2_imshow(dataset["image"][imageDeukae])
