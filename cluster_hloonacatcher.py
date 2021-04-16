@@ -20,89 +20,51 @@ import cv2 as cv
 from skimage import io
 from PIL import Image 
 import matplotlib.pylab as plt
+from tqdm import tqdm
 
 def load_zero():
   import os
-
   path = '/media/pauloricardo/basement/bots/hourlyloonacatcher/'
-
-  dataset = {"group": [], "filename": [], "image": [], "post": []}
-  for filename in os.listdir(path + 'loona/'):
-      img = cv.imread(path + 'loona/' + filename)
-      if img is not None:
-          dataset["group"].append('loona')
-          dataset["filename"].append(filename)
-          dataset["image"].append(img)
-          dataset["post"].append(False)
-
-  for filename in os.listdir(path + 'deukae/'):
-      img = cv.imread(path + 'deukae/' + filename)
-      if img is not None:
-          dataset["group"].append('deukae')
-          dataset["filename"].append(filename)
-          dataset["image"].append(img)
-          dataset["post"].append(False)
-
-  return dataset
-
-def load_flying():
-  import os
-
-  path = '/media/pauloricardo/basement/bots/hourlyloonacatcher/'
-
-  dataset = pd.read_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_dataset.csv').drop(columns='Unnamed: 0').reset_index().drop(columns='index').to_dict(orient='list')
-  dataset["image"] = []
-  for filename in os.listdir(path + 'loona/'):
-      img = cv.imread(path + 'loona/' + filename)
-      if img is not None and filename not in dataset["filename"]:
-        dataset["group"].append('loona')
-        dataset["filename"].append(filename)
-        dataset["image"].append(img)
-        dataset["post"].append(False)
-      elif img is not None:
-        dataset["image"].append(img)
-  
-  for filename in os.listdir(path + 'deukae/'):
-      img = cv.imread(path + 'deukae/' + filename)
-      if img is not None and filename not in dataset["filename"]:
-        dataset["group"].append('deukae')
-        dataset["filename"].append(filename)
-        dataset["image"].append(img)
-        dataset["post"].append(False)
-      elif img is not None:
-        dataset["image"].append(img)
-
-  return dataset
-
-"""# Extraindo características do dataset usando Histograma de Cor"""
-
-def prepareX(dataset):
+  dataset = pd.DataFrame(columns=["group", "filename", "post"])
+  files_loona, files_deukae = list(os.listdir(path + 'loona/')), list(os.listdir(path + 'deukae/')) 
   color = ('b','g','r')
-
-  dataset_hist_r = []
-  dataset_hist_g = []
-  dataset_hist_b = []
-
-  counter = 0
-  for image in dataset["image"]:
-    hists = {}
+  dataset_hist_r = np.zeros(((len(files_loona) + len(files_deukae)), 256))
+  dataset_hist_g = np.zeros(((len(files_loona) + len(files_deukae)), 256))
+  dataset_hist_b = np.zeros(((len(files_loona) + len(files_deukae)), 256))
+  for filename in tqdm(files_loona):
+    img = cv.imread(path + 'loona/' + filename)
+    temp = {"group": 'loona', "filename": filename, "post": False}
+    dataset = dataset.append(temp, ignore_index = True)
+    dataset = dataset.reset_index(drop=True)
+    idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
     for i,col in enumerate(color):
-      histr = cv.calcHist([image],[i],None,[256],[0,256])
-      if col == 'r': dataset_hist_r.append(histr)
-      if col == 'g': dataset_hist_g.append(histr)
-      if col == 'b': dataset_hist_b.append(histr)
+      histr = cv.calcHist([img],[i],None,[256],[0,256])
+      if col == 'r': dataset_hist_r[idx] = histr.ravel()
+      if col == 'g': dataset_hist_g[idx] = histr.ravel()
+      if col == 'b': dataset_hist_b[idx] = histr.ravel()
+  
+  for filename in tqdm(files_deukae):
+    img = cv.imread(path + 'deukae/' + filename)
+    temp = {"group": 'loona', "filename": filename, "post": False}
+    dataset = dataset.append(temp, ignore_index = True)
+    dataset = dataset.reset_index(drop=True)
+    idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
+    for i,col in enumerate(color):
+      histr = cv.calcHist([img],[i],None,[256],[0,256])
+      if col == 'r': dataset_hist_r[idx] = histr.ravel()
+      if col == 'g': dataset_hist_g[idx] = histr.ravel()
+      if col == 'b': dataset_hist_b[idx] = histr.ravel()
 
-
-  X_r = np.array(dataset_hist_r)
+  # flatten histograms
+  X_r = dataset_hist_r
   length = np.sqrt((X_r**2).sum(axis=1))[:,None]
   X_r = X_r / length
 
-  X_g = np.array(dataset_hist_g)
+  X_g = dataset_hist_g
   length = np.sqrt((X_g**2).sum(axis=1))[:,None]
   X_g = X_g / length
 
-
-  X_b = np.array(dataset_hist_b)
+  X_b = dataset_hist_b
   length = np.sqrt((X_b**2).sum(axis=1))[:,None]
   X_b = X_b / length
 
@@ -112,8 +74,79 @@ def prepareX(dataset):
   X = X.reshape(X.shape[0],X.shape[1])
   X.shape
 
-  return X
+  return dataset.to_dict(orient='list'), X
 
+def load_flying():
+  import os
+  path = '/media/pauloricardo/basement/bots/hourlyloonacatcher/'
+  dataset = pd.read_csv('/media/pauloricardo/basement/bots/hourlyloonacatcher_dfs/df_dataset.csv').drop(columns='Unnamed: 0').reset_index(drop=True)
+  files_loona, files_deukae = list(os.listdir(path + 'loona/')), list(os.listdir(path + 'deukae/')) 
+  color = ('b','g','r')
+  dataset_hist_r = np.zeros(((len(files_loona) + len(files_deukae)), 256))
+  dataset_hist_g = np.zeros(((len(files_loona) + len(files_deukae)), 256))
+  dataset_hist_b = np.zeros(((len(files_loona) + len(files_deukae)), 256))
+  for filename in tqdm(files_loona):
+    img = cv.imread(path + 'loona/' + filename)
+    if img is not None and dataset[dataset["filename"] == filename].shape[0] == 0:
+      temp = {"group": 'loona', "filename": filename, "post": False}
+      dataset = dataset.append(temp, ignore_index = True)
+      dataset = dataset.reset_index(drop=True)
+      idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
+      for i,col in enumerate(color):
+        histr = cv.calcHist([img],[i],None,[256],[0,256])
+        if col == 'r': dataset_hist_r[idx] = histr.ravel()
+        if col == 'g': dataset_hist_g[idx] = histr.ravel()
+        if col == 'b': dataset_hist_b[idx] = histr.ravel()
+    elif img is not None:
+      dataset = dataset.reset_index(drop=True)
+      idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
+      for i,col in enumerate(color):
+        histr = cv.calcHist([img],[i],None,[256],[0,256])
+        if col == 'r': dataset_hist_r[idx] = histr.ravel()
+        if col == 'g': dataset_hist_g[idx] = histr.ravel()
+        if col == 'b': dataset_hist_b[idx] = histr.ravel()
+  
+  for filename in tqdm(files_deukae):
+    img = cv.imread(path + 'deukae/' + filename)
+    if img is not None and dataset[dataset["filename"] == filename].shape[0] == 0:
+      temp = {"group": 'loona', "filename": filename, "post": False}
+      dataset = dataset.append(temp, ignore_index = True)
+      dataset = dataset.reset_index(drop=True)
+      idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
+      for i,col in enumerate(color):
+        histr = cv.calcHist([img],[i],None,[256],[0,256])
+        if col == 'r': dataset_hist_r[idx] = histr.ravel()
+        if col == 'g': dataset_hist_g[idx] = histr.ravel()
+        if col == 'b': dataset_hist_b[idx] = histr.ravel()
+    elif img is not None:
+      dataset = dataset.reset_index(drop=True)
+      idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
+      for i,col in enumerate(color):
+        histr = cv.calcHist([img],[i],None,[256],[0,256])
+        if col == 'r': dataset_hist_r[idx] = histr.ravel()
+        if col == 'g': dataset_hist_g[idx] = histr.ravel()
+        if col == 'b': dataset_hist_b[idx] = histr.ravel()
+
+  # flatten histograms
+  X_r = dataset_hist_r
+  length = np.sqrt((X_r**2).sum(axis=1))[:,None]
+  length[length == 0] = 1
+  X_r = X_r / length
+  X_g = dataset_hist_g
+  length = np.sqrt((X_g**2).sum(axis=1))[:,None]
+  length[length == 0] = 1
+  X_g = X_g / length
+  X_b = dataset_hist_b
+  length = np.sqrt((X_b**2).sum(axis=1))[:,None]
+  length[length == 0] = 1
+  X_b = X_b / length
+  X = np.concatenate((X_r,X_g,X_g),axis=1)
+  X.shape
+  X = X.reshape(X.shape[0],X.shape[1])
+  X.shape
+
+  return dataset.to_dict(orient='list'), X
+  
 """# Agrupamento de Imagens"""
 
 from sklearn.cluster import KMeans
@@ -139,7 +172,7 @@ def get_probs(pairs_prob = [100/84] * 84):
       'chuu',
       'gowon',
       'oliviahye'
-      ]
+    ]
     deukae = [
         "jiu",
         "sua",
@@ -175,8 +208,7 @@ n_clusters = 50
 
 def first_run():  
 
-  dataset = load_zero()
-  X = prepareX(dataset)
+  dataset, X = load_zero()
   kmeans = do_kmeans(X, n_clusters) 
   cluster_labels = kmeans.labels_
 
@@ -206,20 +238,26 @@ def first_run():
     #get image pair for post
     for c in clusterList:
       for image_id, cluster in enumerate(cluster_labels):
+        try:
           if not dataset["post"][image_id]:
             if cluster == c:
               if choice[0] in dataset["filename"][image_id]:
                 print(image_id)
                 imageLoona = image_id
                 break
+        except:
+          continue
 
       for image_id, cluster in enumerate(cluster_labels):
-          if not dataset["post"][image_id]:
-            if cluster == c:
-              if choice[1] in dataset["filename"][image_id]:
-                print(image_id)
-                imageDeukae = image_id
-                break
+          try:
+            if not dataset["post"][image_id]:
+              if cluster == c:
+                if choice[1] in dataset["filename"][image_id]:
+                  print(image_id)
+                  imageDeukae = image_id
+                  break
+          except:
+            continue
 
       if (imageLoona != -1) and (imageDeukae != -1):
         dataset["post"][imageLoona] = True
@@ -242,7 +280,6 @@ def first_run():
 
   # generate dfs for saving
 
-  del dataset['image']
   df_dataset = pd.DataFrame(dataset)
 
   df_images_to_post = pd.DataFrame(images_to_post)
@@ -258,8 +295,7 @@ def first_run():
 
 def flying_run():  
 
-  dataset = load_flying()
-  X = prepareX(dataset)
+  dataset, X = load_flying()
   kmeans = do_kmeans(X, n_clusters) 
   cluster_labels = kmeans.labels_
 
@@ -289,20 +325,26 @@ def flying_run():
     #get image pair for post
     for c in clusterList:
       for image_id, cluster in enumerate(cluster_labels):
+        try:
           if not dataset["post"][image_id]:
             if cluster == c:
               if choice[0] in dataset["filename"][image_id]:
                 print(image_id)
                 imageLoona = image_id
                 break
+        except:
+          continue
 
       for image_id, cluster in enumerate(cluster_labels):
+        try:
           if not dataset["post"][image_id]:
             if cluster == c:
               if choice[1] in dataset["filename"][image_id]:
                 print(image_id)
                 imageDeukae = image_id
                 break
+        except:
+          continue
 
       if (imageLoona != -1) and (imageDeukae != -1):
         dataset["post"][imageLoona] = True
@@ -327,8 +369,6 @@ def flying_run():
     #cv2_imshow(dataset["image"][imageLoona])
     #cv2_imshow(dataset["image"][imageDeukae])
 
-  # generate dfs for saving
-  del dataset['image']
   # only when images where deleted
   #del dataset['Unnamed: 0.1']
   
