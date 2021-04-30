@@ -78,7 +78,7 @@ accounts = {
   "gahyeon": "hourlygahyeon",
   'heejin': 'hourlyheejin', 
   'hyunjin': 'hourlyaeong', 
-  'haseul': 'seulhour', 
+  'haseul': 'jhfeeds', 
   'yeojin': 'hourlyeojins', 
   'vivi': 'hourvivi', 
   'kimlip': 'kimliphourly', 
