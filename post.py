@@ -105,7 +105,7 @@ def hloonacatcher():
   files = [image_loona, image_deukae]
   file1 = random.choices(files, weights=[100,0], k=1)
   filenames = file1 + list(set(files) - set(file1))
-  status = '@'+accounts[''.join([i for i in filenames[0].partition(".")[0] if not i.isdigit()])]+' ✨ '+'@'+accounts[''.join([i for i in filenames[1].partition(".")[0] if not i.isdigit()])]
+  status = '@' + accounts[''.join([i for i in filenames[0].partition(".")[0] if not i.isdigit()])]+' ✨ '+'@'+accounts[''.join([i for i in filenames[1].partition(".")[0] if not i.isdigit()])]
   media_ids = []
   for filename in filenames:
       res = api.media_upload(filename)
