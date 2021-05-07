@@ -45,7 +45,7 @@ def load_zero():
   
   for filename in tqdm(files_deukae):
     img = cv.imread(path + 'deukae/' + filename)
-    temp = {"group": 'loona', "filename": filename, "post": False}
+    temp = {"group": 'deukae', "filename": filename, "post": False}
     dataset = dataset.append(temp, ignore_index = True)
     dataset = dataset.reset_index(drop=True)
     idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
@@ -109,7 +109,7 @@ def load_flying():
   for filename in tqdm(files_deukae):
     img = cv.imread(path + 'deukae/' + filename)
     if img is not None and dataset[dataset["filename"] == filename].shape[0] == 0:
-      temp = {"group": 'loona', "filename": filename, "post": False}
+      temp = {"group": 'deukae', "filename": filename, "post": False}
       dataset = dataset.append(temp, ignore_index = True)
       dataset = dataset.reset_index(drop=True)
       idx = dataset[dataset["filename"] == filename].index.values.astype(int)[0]
