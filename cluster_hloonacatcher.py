@@ -196,9 +196,6 @@ def update_probs(pairs, pairs_prob, choice):
       pairs_prob[i] += 100/84
     else:
       pairs_prob[i] = 0
-
-  print("update: {0}".format(pairs_prob))
-
   return pairs_prob
 
 import random 
@@ -329,7 +326,6 @@ def flying_run():
           if not dataset["post"][image_id]:
             if cluster == c:
               if choice[0] in dataset["filename"][image_id]:
-                print(image_id)
                 imageLoona = image_id
                 break
         except:
@@ -340,7 +336,6 @@ def flying_run():
           if not dataset["post"][image_id]:
             if cluster == c:
               if choice[1] in dataset["filename"][image_id]:
-                print(image_id)
                 imageDeukae = image_id
                 break
         except:
