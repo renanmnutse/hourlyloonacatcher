@@ -69,24 +69,24 @@ api = tweepy.API(auth)
 #api.update_status(status='auth works')
  
 accounts = {
-  "jiu": "hourlyjiu",
+  "jiu": "jiuhourly",
   "sua": "suahours",
-  "siyeon": "siyeonhours",
+  "siyeon": "siyeonhourly",
   "handong": "hourlydong",
   "yoohyeon": "hourlyyooh",
   "dami": "hourly_dami",
   "gahyeon": "hourlygahyeon",
   'heejin': 'hourlyheejin', 
   'hyunjin': 'hourlyaeong', 
-  'haseul': 'jhfeeds', 
+  'haseul': 'haseulhourly', 
   'yeojin': 'hourlyeojins', 
   'vivi': 'hourvivi', 
   'kimlip': 'kimliphourly', 
-  'jinsoul': 'hourlyjinsoul', 
-  'choerry': 'hourlychoerry', 
+  'jinsoul': 'hoursouler', 
+  'choerry': 'choerryhour', 
   'yves': 'yveryhour', 
-  'chuu': 'chuuhour', 
-  'gowon': 'hourlygwon',
+  'chuu': 'hourIychuu', 
+  'gowon': 'pgwnhour',
   'oliviahye': 'hourlyolivia'
 }
 
