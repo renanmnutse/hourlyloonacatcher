@@ -73,7 +73,7 @@ last_id = pd.read_csv('last_id.csv', index_col='Unnamed: 0').to_dict()['0']
 
 def fetch(dict, folder):    
   for key,value in dict.items():
-    public_tweets = api.user_timeline(value, count = 200, include_rts = 'false', exclude_replies = 'true')
+    public_tweets = api.user_timeline(screen_name=value, count = 200, include_rts = 'false', exclude_replies = 'true')
     url = []
     for tweet in public_tweets:
       if "media" in tweet.entities:
