@@ -73,7 +73,7 @@ accounts = {
   "sua": "suahours",
   "siyeon": "siyeonhourly",
   "handong": "hourlydong",
-  "yoohyeon": "hourlyyooh",
+  "yoohyeon": "HourlyYoohyeon",
   "dami": "hourly_dami",
   "gahyeon": "hourlygahyeon",
   'heejin': 'hourlyheejin', 
