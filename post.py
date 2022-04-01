@@ -15,7 +15,7 @@ import os.path
 import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import sys
 
 # If modifying these scopes, delete the file token.pickle.
@@ -92,6 +92,8 @@ accounts = {
 
 
 def hloonacatcher():
+  fuso = timezone(timedelta(hours = 9), 'KST')
+  print(datetime.now(fuso))
   service = drive_auth()
   file_id = download_file(service, 'images_to_post.csv')
   images = pd.read_csv('images_to_post.csv').drop(columns='Unnamed: 0')
