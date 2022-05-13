@@ -75,19 +75,19 @@ accounts = {
   "handong": "hourlydong",
   "yoohyeon": "HourlyYoohyeon",
   "dami": "hourly_dami",
-  "gahyeon": "hourlygahyeon",
-  'heejin': 'hourlyheejin', 
+  "gahyeon": "hourlygah",
+  'heejin': 'heeukis', 
   'hyunjin': 'hourlyaeong', 
-  'haseul': 'haseulsource', 
-  'yeojin': 'hourlyeojins', 
-  'vivi': 'hourvivi', 
+  'haseul': 'hourseul', 
+  'yeojin': 'yeojinhours', 
+  'vivi': 'vivigraphy', 
   'kimlip': 'kimliphourly', 
   'jinsoul': 'hoursouler', 
   'choerry': 'choerryhour', 
   'yves': 'yveryhour', 
   'chuu': 'hourIychuu', 
   'gowon': 'pgwnhour',
-  'oliviahye': 'hourlyolivia'
+  'oliviahye': 'oliviahyehourly'
 }
 
 
